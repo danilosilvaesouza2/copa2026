@@ -3,14 +3,23 @@ import { useState, useMemo } from "react";
 // Cada seleção tem 20 figurinhas: 1 Escudo (foil), 18 jogadores, 1 Foto do Time
 // 48 × 20 = 960 jogadores + 8 FWC + 12 Coca-Cola = 980 ✓
 
-const makeTeam = (name, flag, code, players) => ({
-  name, flag, code,
-  stickers: [
-    `${code}-1 · Escudo (Foil)`,
-    ...players.map((p, i) => `${code}-${i+2} · ${p}`),
-    `${code}-20 · Foto do Time`,
-  ]
-});
+const makeTeam = (name, flag, code, players) => {
+  // Estrutura: 1=Escudo, 2-10=jogadores 1-9, 13=Foto do Time, 14-20=jogadores 10-16... 
+  // Na verdade: 1=Escudo, 2-12=jogadores 1-11, 13=Foto do Time, 14-20=jogadores 12-18
+  const stickers = [];
+  stickers.push(`${code}-1 · Escudo (Foil)`);
+  // jogadores 1 a 11 → posições 2 a 12
+  for (let i = 0; i < 11; i++) {
+    stickers.push(`${code}-${i+2} · ${players[i]}`);
+  }
+  // Foto do Time → posição 13
+  stickers.push(`${code}-13 · Foto do Time`);
+  // jogadores 12 a 18 → posições 14 a 20
+  for (let i = 11; i < 18; i++) {
+    stickers.push(`${code}-${i+3} · ${players[i]}`);
+  }
+  return { name, flag, code, stickers };
+};
 
 const albumData = [
   { group: "Grupo A", teams: [
